@@ -10,7 +10,7 @@ const About = () => {
     },
     {
       icon: Users,
-      title: "Kuşaklararası Bağ",
+      title: "Nesiller Arası Bağlantı",
       description: "Yaşlı bireyler ve genç gönüllüler arasında anlamlı ilişkiler kurma"
     },
     {
