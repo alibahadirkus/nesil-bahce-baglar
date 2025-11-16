@@ -22,3 +22,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Server uploads
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Database
+*.sqlite
+*.db
+
+# WhatsApp session (should not be committed)
+whatsapp-session/
+*.session
