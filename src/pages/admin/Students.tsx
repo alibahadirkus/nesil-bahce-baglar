@@ -167,7 +167,7 @@ const Students = () => {
         school_name: student.school_name || '',
         phone: student.phone || '',
         email: student.email || '',
-        volunteer_id: student.volunteer_id ? student.volunteer_id.toString() : '',
+        volunteer_id: student.volunteer_id ? student.volunteer_id.toString() : 'none',
         notes: student.notes || '',
       });
     } else {
@@ -185,7 +185,7 @@ const Students = () => {
     e.preventDefault();
     const submitData = {
       ...formData,
-      volunteer_id: formData.volunteer_id ? parseInt(formData.volunteer_id) : null,
+      volunteer_id: formData.volunteer_id && formData.volunteer_id !== "none" ? parseInt(formData.volunteer_id) : null,
     };
 
     if (editingStudent) {
@@ -399,16 +399,16 @@ const Students = () => {
             <div className="space-y-2">
               <Label htmlFor="volunteer_id">Gönüllü Eşleştir</Label>
               <Select
-                value={formData.volunteer_id}
+                value={formData.volunteer_id || undefined}
                 onValueChange={(value) =>
-                  setFormData({ ...formData, volunteer_id: value })
+                  setFormData({ ...formData, volunteer_id: value === "none" ? "" : value })
                 }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Gönüllü seçin (opsiyonel)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Gönüllü seçilmedi</SelectItem>
+                  <SelectItem value="none">Gönüllü seçilmedi</SelectItem>
                   {volunteers.map((volunteer: any) => (
                     <SelectItem key={volunteer.id} value={volunteer.id.toString()}>
                       {volunteer.first_name} {volunteer.last_name} - {volunteer.phone}
