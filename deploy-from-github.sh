@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 
 # Değişkenler
 PROJECT_DIR="/var/www/nesil-bahce-baglar"
-LOG_DIR="/var/log/nesil-bahce"
+LOG_DIR="$PROJECT_DIR/logs"
 GIT_REPO="https://github.com/alibahadirkus/nesil-bahce-baglar.git"
 GIT_BRANCH="main"
 
