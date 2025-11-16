@@ -90,7 +90,8 @@ fi
 # 8. Bağımlılıkları yükle
 echo -e "${GREEN}📦 Bağımlılıklar yükleniyor...${NC}"
 cd $PROJECT_DIR
-npm ci --production=false
+# npm ci yerine npm install kullan (package-lock.json senkronizasyon sorunlarını önlemek için)
+npm install
 
 # 9. TypeScript build
 echo -e "${GREEN}🔨 Backend build ediliyor...${NC}"
