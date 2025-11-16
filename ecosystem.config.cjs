@@ -10,9 +10,9 @@ module.exports = {
         NODE_ENV: 'production',
         PORT: 3001
       },
-      error_file: '/var/log/nesil-bahce/backend-error.log',
-      out_file: '/var/log/nesil-bahce/backend-out.log',
-      log_file: '/var/log/nesil-bahce/backend.log',
+      error_file: './logs/backend-error.log',
+      out_file: './logs/backend-out.log',
+      log_file: './logs/backend.log',
       time: true,
       autorestart: true,
       watch: false,
@@ -28,9 +28,9 @@ module.exports = {
       env: {
         NODE_ENV: 'production'
       },
-      error_file: '/var/log/nesil-bahce/frontend-error.log',
-      out_file: '/var/log/nesil-bahce/frontend-out.log',
-      log_file: '/var/log/nesil-bahce/frontend.log',
+      error_file: './logs/frontend-error.log',
+      out_file: './logs/frontend-out.log',
+      log_file: './logs/frontend.log',
       time: true,
       autorestart: true,
       watch: false,

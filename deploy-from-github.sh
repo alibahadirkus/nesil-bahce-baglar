@@ -25,6 +25,8 @@ sudo mkdir -p $PROJECT_DIR
 sudo mkdir -p $LOG_DIR
 sudo mkdir -p $PROJECT_DIR/server/uploads
 sudo mkdir -p $PROJECT_DIR/whatsapp-session
+sudo chown -R $USER:$USER $PROJECT_DIR 2>/dev/null || true
+sudo chown -R $USER:$USER $LOG_DIR 2>/dev/null || true
 
 # 2. Git kurulumu
 if ! command -v git &> /dev/null; then
