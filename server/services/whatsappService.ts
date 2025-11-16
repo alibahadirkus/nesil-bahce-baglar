@@ -1,7 +1,9 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const wa = require('whatsapp-web.js');
-const { Client, LocalAuth, Message } = wa;
+const { Client: WAClient, LocalAuth } = wa;
+type WA_Client = typeof WAClient extends new (...args: any[]) => infer T ? T : any;
+type WA_Message = any; // whatsapp-web.js Message type
 import qrcode from 'qrcode-terminal';
 import db from '../config/database.js';
 import { EventEmitter } from 'events';
@@ -10,7 +12,7 @@ import { EventEmitter } from 'events';
 export const whatsappEvents = new EventEmitter();
 
 // WhatsApp client instance
-let whatsappClient: Client | null = null;
+let whatsappClient: WA_Client | null = null;
 let connectionStatus: 'disconnected' | 'connecting' | 'authenticating' | 'authenticated' | 'ready' = 'disconnected';
 let qrCode: string | null = null;
 
@@ -26,7 +28,7 @@ export const initializeWhatsApp = async (): Promise<void> => {
     whatsappEvents.emit('status', connectionStatus);
 
     // WhatsApp client oluştur (LocalAuth ile session'ı sakla)
-    whatsappClient = new Client({
+    whatsappClient = new WAClient({
       authStrategy: new LocalAuth({
         dataPath: './whatsapp-session'
       }),
@@ -97,7 +99,7 @@ export const initializeWhatsApp = async (): Promise<void> => {
       }
     });
 
-    whatsappClient.on('message', async (message: Message) => {
+    whatsappClient.on('message', async (message: WA_Message) => {
       // Gelen mesajları logla (isteğe bağlı)
       console.log('📨 Gelen mesaj:', message.from, message.body);
     });

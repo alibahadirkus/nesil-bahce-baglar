@@ -60,19 +60,19 @@ app.get('/api/health', (req, res) => {
 });
 
 // Test database connection
-db.getConnection((err: any, connection: any) => {
-  if (err) {
+(async () => {
+  try {
+    await db.execute('SELECT 1');
+    console.log('✅ MySQL Database connected successfully');
+  } catch (err: any) {
     console.error('❌ Database connection error:', err.message);
     console.error('💡 ÇÖZÜM:');
     console.error('   1. MySQL servisinin çalıştığından emin olun');
     console.error('   2. MySQL kurulum sihirbazını tamamlayın');
     console.error('   3. server/.env dosyasında DB_PASSWORD değerini kontrol edin');
     console.error('   4. Veritabanının oluşturulduğundan emin olun');
-    return;
   }
-  console.log('✅ MySQL Database connected successfully');
-  connection.release();
-});
+})();
 
 // Socket.IO bağlantıları
 io.on('connection', (socket) => {

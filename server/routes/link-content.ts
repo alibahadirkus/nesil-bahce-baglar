@@ -65,7 +65,7 @@ router.get('/:id', async (req, res) => {
           `SELECT id, url, original_name FROM uploaded_images WHERE id IN (${placeholders})`,
           imageIds
         );
-        images = imageRows;
+        images = imageRows as any[];
       }
     }
 
