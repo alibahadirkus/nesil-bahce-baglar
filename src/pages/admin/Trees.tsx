@@ -577,16 +577,16 @@ const Trees = () => {
               <Label htmlFor="photo_url">Fotoğraf URL (Opsiyonel)</Label>
               <div className="flex gap-2">
                 <Select
-                  value={careData.photo_url}
+                  value={careData.photo_url || undefined}
                   onValueChange={(value) =>
-                    setCareData({ ...careData, photo_url: value })
+                    setCareData({ ...careData, photo_url: value === "none" ? "" : value })
                   }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Yüklenmiş resimlerden seç" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Fotoğraf seçilmedi</SelectItem>
+                    <SelectItem value="none">Fotoğraf seçilmedi</SelectItem>
                     {images.map((image: any) => (
                       <SelectItem key={image.id} value={image.url}>
                         {image.original_name}
@@ -595,7 +595,7 @@ const Trees = () => {
                   </SelectContent>
                 </Select>
               </div>
-              {careData.photo_url && (
+              {careData.photo_url && careData.photo_url !== "none" && (
                 <div className="mt-2">
                   <img
                     src={careData.photo_url}
