@@ -226,7 +226,11 @@ const Trees = () => {
   const handleCareSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedTree) {
-      careActivityMutation.mutate({ treeId: selectedTree.id, data: careData });
+      const submitData = {
+        ...careData,
+        photo_url: careData.photo_url === "none" ? "" : careData.photo_url,
+      };
+      careActivityMutation.mutate({ treeId: selectedTree.id, data: submitData });
     }
   };
 
