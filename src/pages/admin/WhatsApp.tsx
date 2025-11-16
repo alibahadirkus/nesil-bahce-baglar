@@ -41,7 +41,10 @@ import {
 } from '@/components/ui/dialog';
 import { QRCodeSVG } from 'qrcode.react';
 
-const SOCKET_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001';
+// Production'da relative path kullan (Nginx üzerinden backend'e yönlendirilir)
+// Development'da localhost kullan
+const SOCKET_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 
+  (import.meta.env.PROD ? window.location.origin : 'http://localhost:3001');
 
 const WhatsApp = () => {
   const [message, setMessage] = useState('');

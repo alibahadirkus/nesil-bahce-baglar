@@ -1,4 +1,7 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+// Production'da relative path kullan (Nginx üzerinden backend'e yönlendirilir)
+// Development'da localhost kullan
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (import.meta.env.PROD ? '/api' : 'http://localhost:3001/api');
 
 // Auth token'ı localStorage'dan al
 const getAuthToken = (): string | null => {
