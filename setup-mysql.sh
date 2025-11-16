@@ -66,11 +66,17 @@ if [ -f "$PROJECT_DIR/server/.env" ]; then
     echo "DB_PASSWORD=$DB_PASSWORD"
     echo "DB_NAME=$DB_NAME"
 else
-    echo -e "${YELLOW}⚠️  .env dosyası oluşturun:${NC}"
-    cp "$PROJECT_DIR/server/.env.production.example" "$PROJECT_DIR/server/.env"
-    echo "DB_USER=$DB_USER"
-    echo "DB_PASSWORD=$DB_PASSWORD"
-    echo "DB_NAME=$DB_NAME"
+    echo -e "${YELLOW}⚠️  .env dosyası oluşturuluyor...${NC}"
+    if [ -f "$PROJECT_DIR/server/.env.example" ]; then
+        cp "$PROJECT_DIR/server/.env.example" "$PROJECT_DIR/server/.env"
+        # DB bilgilerini güncelle
+        sed -i "s/DB_USER=.*/DB_USER=$DB_USER/" "$PROJECT_DIR/server/.env"
+        sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$DB_PASSWORD/" "$PROJECT_DIR/server/.env"
+        sed -i "s/DB_NAME=.*/DB_NAME=$DB_NAME/" "$PROJECT_DIR/server/.env"
+        echo -e "${GREEN}✅ .env dosyası oluşturuldu ve DB bilgileri güncellendi${NC}"
+    else
+        echo -e "${RED}❌ .env.example dosyası bulunamadı!${NC}"
+    fi
 fi
 
 echo -e "${GREEN}✅ MySQL setup tamamlandı!${NC}"

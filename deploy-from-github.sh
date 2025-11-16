@@ -108,9 +108,9 @@ npm run build:prod
 # 12. .env dosyasını kontrol et
 if [ ! -f "$PROJECT_DIR/server/.env" ]; then
     echo -e "${YELLOW}⚠️  server/.env dosyası bulunamadı!${NC}"
-    if [ -f "$PROJECT_DIR/server/.env.production.example" ]; then
-        cp $PROJECT_DIR/server/.env.production.example $PROJECT_DIR/server/.env
-        echo -e "${GREEN}✅ .env dosyası oluşturuldu (.env.production.example'dan)${NC}"
+    if [ -f "$PROJECT_DIR/server/.env.example" ]; then
+        cp $PROJECT_DIR/server/.env.example $PROJECT_DIR/server/.env
+        echo -e "${GREEN}✅ .env dosyası oluşturuldu (.env.example'dan)${NC}"
         echo -e "${YELLOW}⚠️  Lütfen server/.env dosyasını düzenleyin:${NC}"
         echo "nano $PROJECT_DIR/server/.env"
         echo ""
@@ -118,7 +118,7 @@ if [ ! -f "$PROJECT_DIR/server/.env" ]; then
         echo -e "${YELLOW}   Script durduruluyor. .env'i düzenledikten sonra tekrar çalıştırın.${NC}"
         exit 0  # Hata vermesin, sadece uyarı ver
     else
-        echo -e "${RED}❌ .env.production.example dosyası bulunamadı!${NC}"
+        echo -e "${RED}❌ .env.example dosyası bulunamadı!${NC}"
         exit 1
     fi
 fi
