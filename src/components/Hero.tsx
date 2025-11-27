@@ -22,7 +22,7 @@ const Hero = () => {
         <div className="flex justify-center mb-6">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20">
             <Leaf className="h-5 w-5 text-primary-foreground" />
-            <span className="text-primary-foreground text-sm font-medium">8 Haftalık Hortikürel Terapi Programı</span>
+            <span className="text-primary-foreground text-sm font-medium">8 Haftalık Hortikürel Terapi Faaliyetleri</span>
           </div>
         </div>
 

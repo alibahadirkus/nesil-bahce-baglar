@@ -28,7 +28,7 @@ const CallToAction = () => {
                   <Mail className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-semibold text-primary-foreground mb-2">E-posta</h3>
-                <p className="text-primary-foreground/80 text-sm">info@yesilgelecek.org</p>
+                <p className="text-primary-foreground/80 text-sm">nesildennesileyesilgelecege@gmail.com</p>
               </CardContent>
             </Card>
 
@@ -38,7 +38,7 @@ const CallToAction = () => {
                   <Phone className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-semibold text-primary-foreground mb-2">Telefon</h3>
-                <p className="text-primary-foreground/80 text-sm">+90 (555) 123 4567</p>
+                <p className="text-primary-foreground/80 text-sm">+90 544 495 07 22</p>
               </CardContent>
             </Card>
 
@@ -48,7 +48,7 @@ const CallToAction = () => {
                   <MapPin className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-semibold text-primary-foreground mb-2">Adres</h3>
-                <p className="text-primary-foreground/80 text-sm">İstanbul, Türkiye</p>
+                <p className="text-primary-foreground/80 text-sm">Balıkesir Bandırma Türkiye</p>
               </CardContent>
             </Card>
           </div>
