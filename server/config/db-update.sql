@@ -132,5 +132,23 @@ PREPARE createIndexIfNotExists FROM @preparedStatement;
 EXECUTE createIndexIfNotExists;
 DEALLOCATE PREPARE createIndexIfNotExists;
 
+-- Gönüllü aktiviteleri tablosu
+CREATE TABLE IF NOT EXISTS volunteer_activities (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  volunteer_id INT NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  activity_date DATE NOT NULL,
+  activity_time TIME,
+  location VARCHAR(500),
+  created_by INT, -- Admin ID (opsiyonel)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (volunteer_id) REFERENCES volunteers(id) ON DELETE CASCADE,
+  INDEX idx_volunteer_id (volunteer_id),
+  INDEX idx_activity_date (activity_date),
+  INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 

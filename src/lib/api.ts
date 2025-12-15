@@ -339,3 +339,159 @@ export const linkContentAPI = {
   },
 };
 
+// Activities API
+export const activitiesAPI = {
+  getAll: async (params?: { volunteer_id?: number; start_date?: string; end_date?: string }) => {
+    const queryParams = new URLSearchParams();
+    if (params?.volunteer_id) queryParams.append('volunteer_id', params.volunteer_id.toString());
+    if (params?.start_date) queryParams.append('start_date', params.start_date);
+    if (params?.end_date) queryParams.append('end_date', params.end_date);
+    const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
+    const response = await apiRequest(`/activities${query}`);
+    return response.json();
+  },
+  
+  getByVolunteerId: async (volunteerId: number, params?: { start_date?: string; end_date?: string }) => {
+    const queryParams = new URLSearchParams();
+    if (params?.start_date) queryParams.append('start_date', params.start_date);
+    if (params?.end_date) queryParams.append('end_date', params.end_date);
+    const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
+    // Public endpoint - auth gerekmez
+    const response = await fetch(`${API_BASE_URL}/activities/volunteer/${volunteerId}${query}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch activities');
+    }
+    return response.json();
+  },
+  
+  getGallery: async () => {
+    // Public endpoint - auth gerekmez
+    const response = await fetch(`${API_BASE_URL}/activities/public/gallery`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch gallery activities');
+    }
+    return response.json();
+  },
+  
+  getById: async (id: number) => {
+    const response = await apiRequest(`/activities/${id}`);
+    return response.json();
+  },
+  
+  create: async (data: {
+    volunteer_id: number;
+    title: string;
+    description?: string;
+    activity_date: string;
+    activity_time?: string;
+    location?: string;
+  }) => {
+    const response = await apiRequest('/activities', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+  
+  createBulk: async (data: {
+    volunteer_ids: number[];
+    title: string;
+    description?: string;
+    activity_date: string;
+    activity_time?: string;
+    location?: string;
+  }) => {
+    const response = await apiRequest('/activities/bulk', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+  
+  update: async (id: number, data: {
+    title?: string;
+    description?: string;
+    activity_date?: string;
+    activity_time?: string;
+    location?: string;
+  }) => {
+    const response = await apiRequest(`/activities/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+  
+  delete: async (id: number) => {
+    const response = await apiRequest(`/activities/${id}`, {
+      method: 'DELETE',
+    });
+    return response.json();
+  },
+};
+
+// Process Steps API
+export const processStepsAPI = {
+  getAll: async () => {
+    // Public endpoint - auth gerekmez
+    const response = await fetch(`${API_BASE_URL}/process-steps`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch process steps');
+    }
+    return response.json();
+  },
+  
+  getByStepNumber: async (stepNumber: number) => {
+    // Public endpoint - auth gerekmez
+    const response = await fetch(`${API_BASE_URL}/process-steps/${stepNumber}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch process step');
+    }
+    return response.json();
+  },
+  
+  // Admin endpoints
+  getAllAdmin: async () => {
+    const response = await apiRequest('/process-steps/admin/all');
+    return response.json();
+  },
+  
+  getByStepNumberAdmin: async (stepNumber: number) => {
+    const response = await apiRequest(`/process-steps/admin/step/${stepNumber}`);
+    return response.json();
+  },
+  
+  create: async (data: {
+    step_number: number;
+    image_id: number;
+    title?: string;
+    description?: string;
+    display_order?: number;
+  }) => {
+    const response = await apiRequest('/process-steps', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+  
+  update: async (id: number, data: {
+    title?: string;
+    description?: string;
+    display_order?: number;
+  }) => {
+    const response = await apiRequest(`/process-steps/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+  
+  delete: async (id: number) => {
+    const response = await apiRequest(`/process-steps/${id}`, {
+      method: 'DELETE',
+    });
+    return response.json();
+  },
+};
+

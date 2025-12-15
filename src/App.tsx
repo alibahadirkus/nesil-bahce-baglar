@@ -11,10 +11,15 @@ import Dashboard from "./pages/admin/Dashboard";
 import Students from "./pages/admin/Students";
 import Trees from "./pages/admin/Trees";
 import Volunteers from "./pages/admin/Volunteers";
+import Activities from "./pages/admin/Activities";
+import ProcessSteps from "./pages/admin/ProcessSteps";
 import SMS from "./pages/admin/SMS";
 import WhatsApp from "./pages/admin/WhatsApp";
 import Images from "./pages/admin/Images";
 import Preview from "./pages/Preview";
+import VolunteerDashboard from "./pages/VolunteerDashboard";
+import ActivityGallery from "./pages/ActivityGallery";
+import ProcessStepGallery from "./pages/ProcessStepGallery";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +32,9 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/preview/:id" element={<Preview />} />
+          <Route path="/volunteer/:id" element={<VolunteerDashboard />} />
+          <Route path="/gallery" element={<ActivityGallery />} />
+          <Route path="/process-step/:stepNumber" element={<ProcessStepGallery />} />
           
           {/* Admin Routes */}
           <Route path="/admin/login" element={<Login />} />
@@ -35,6 +43,8 @@ const App = () => (
             <Route path="students" element={<Students />} />
             <Route path="trees" element={<Trees />} />
             <Route path="volunteers" element={<Volunteers />} />
+            <Route path="activities" element={<Activities />} />
+            <Route path="process-steps" element={<ProcessSteps />} />
             <Route path="sms" element={<SMS />} />
             <Route path="whatsapp" element={<WhatsApp />} />
             <Route path="images" element={<Images />} />

@@ -1,8 +1,21 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { GraduationCap, UserPlus, TreePine, Droplets, Sprout, Camera } from 'lucide-react';
+import { GraduationCap, UserPlus, TreePine, Droplets, Sprout, Camera, Loader2, X } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { processStepsAPI } from '@/lib/api';
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 const Process = () => {
-  const steps = [
+  const [selectedStep, setSelectedStep] = useState<number | null>(null);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<any>(null);
+  
+  // Statik step tanımları
+  const staticSteps = [
     {
       step: 1,
       icon: GraduationCap,
@@ -41,6 +54,42 @@ const Process = () => {
     }
   ];
 
+  // Veritabanından process steps'i getir
+  const { data: dbSteps = [], isLoading } = useQuery({
+    queryKey: ['process-steps'],
+    queryFn: () => processStepsAPI.getAll(),
+  });
+
+  // Seçili step'in resimlerini getir
+  const { data: stepImages = [], isLoading: isLoadingImages } = useQuery({
+    queryKey: ['process-step-images', selectedStep],
+    queryFn: () => processStepsAPI.getByStepNumber(selectedStep!),
+    enabled: !!selectedStep && selectedStep >= 1 && selectedStep <= 6,
+  });
+
+  // Step'leri birleştir - veritabanındaki bilgilerle statik bilgileri birleştir
+  const steps = staticSteps.map((staticStep) => {
+    const dbStep = dbSteps.find((s: any) => s.step_number === staticStep.step);
+    
+    // Resim var mı kontrol et
+    let hasImages = false;
+    if (dbStep?.image_ids) {
+      try {
+        const imageIds = JSON.parse(dbStep.image_ids);
+        hasImages = Array.isArray(imageIds) && imageIds.length > 0;
+      } catch (e) {
+        hasImages = false;
+      }
+    }
+
+    return {
+      ...staticStep,
+      title: dbStep?.title || staticStep.title,
+      description: dbStep?.description || staticStep.description,
+      hasImages,
+    };
+  });
+
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
@@ -53,11 +102,26 @@ const Process = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {steps.map((step) => {
-            const Icon = step.icon;
-            return (
-              <Card key={step.step} className="border-2 border-border hover:border-primary transition-all shadow-soft hover:shadow-strong">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {steps.map((step) => {
+              const Icon = step.icon;
+              const isClickable = step.hasImages; // Resim varsa tıklanabilir
+              return (
+                <Card 
+                  key={step.step} 
+                  className={`border-2 border-border hover:border-primary transition-all shadow-soft hover:shadow-strong ${
+                    isClickable ? 'cursor-pointer' : ''
+                  }`}
+                  onClick={isClickable ? () => {
+                    setSelectedStep(step.step);
+                    setIsGalleryOpen(true);
+                  } : undefined}
+                >
                 <CardContent className="pt-6">
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0">
@@ -75,9 +139,10 @@ const Process = () => {
                   </div>
                 </CardContent>
               </Card>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
 
         <Card className="mt-12 border-2 border-primary/20 bg-card shadow-strong">
           <CardContent className="p-8 md:p-12">
@@ -93,6 +158,93 @@ const Process = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Process Step Gallery Modal */}
+      <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          {selectedStep && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold">
+                  {steps.find(s => s.step === selectedStep)?.title}
+                </h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsGalleryOpen(false)}
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+
+              {isLoadingImages ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                </div>
+              ) : stepImages.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  Bu adım için henüz fotoğraf eklenmemiş
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {stepImages.map((item: any, index: number) => (
+                    <div
+                      key={item.id || index}
+                      className="relative group cursor-pointer"
+                      onClick={() => setSelectedImage(item)}
+                    >
+                      <div className="aspect-square relative overflow-hidden rounded-lg border">
+                        <img
+                          src={item.url}
+                          alt={item.title || item.original_name || `Fotoğraf ${index + 1}`}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
+                      </div>
+                      {(item.title || item.description) && (
+                        <div className="mt-2">
+                          {item.title && (
+                            <p className="text-sm font-medium truncate">{item.title}</p>
+                          )}
+                          {item.description && (
+                            <p className="text-xs text-muted-foreground line-clamp-2">
+                              {item.description}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Full Image View Dialog */}
+      <Dialog open={!!selectedImage} onOpenChange={(open) => !open && setSelectedImage(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          {selectedImage && (
+            <div className="space-y-4">
+              <img
+                src={selectedImage.url}
+                alt={selectedImage.title || selectedImage.original_name || 'Fotoğraf'}
+                className="w-full h-auto rounded-lg"
+              />
+              {(selectedImage.title || selectedImage.description) && (
+                <div className="space-y-2">
+                  {selectedImage.title && (
+                    <h3 className="text-xl font-semibold">{selectedImage.title}</h3>
+                  )}
+                  {selectedImage.description && (
+                    <p className="text-muted-foreground">{selectedImage.description}</p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };

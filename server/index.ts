@@ -22,6 +22,8 @@ import whatsappRoutes from './routes/whatsapp.js';
 import uploadRoutes from './routes/upload.js';
 import linkContentRoutes from './routes/link-content.js';
 import previewRoutes from './routes/preview.js';
+import activitiesRoutes from './routes/activities.js';
+import processStepsRoutes from './routes/process-steps.js';
 import { initializeWhatsApp, whatsappEvents, getWhatsAppStatus } from './services/whatsappService.js';
 
 const app = express();
@@ -52,6 +54,8 @@ app.use('/api/sms', smsRoutes);
 app.use('/api/whatsapp', whatsappRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/link-content', linkContentRoutes);
+app.use('/api/activities', activitiesRoutes);
+app.use('/api/process-steps', processStepsRoutes);
 app.use('/preview', previewRoutes);
 
 // Health check
