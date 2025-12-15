@@ -31,7 +31,7 @@ const Process = () => {
     {
       step: 3,
       icon: TreePine,
-      title: 'Ağaç Dikimi',
+      title: 'Gönüllü Katılımcı',
       description: 'Öğrenci ve gönüllü birlikte okul bahçesinde ağacı dikerler'
     },
     {
@@ -250,6 +250,3 @@ const Process = () => {
 };
 
 export default Process;
-
-
-

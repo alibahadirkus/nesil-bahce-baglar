@@ -7,49 +7,49 @@ const Activities = () => {
     {
       week: 1,
       icon: Flower2,
-      title: "Bahçe Faaliyetlerine Giriş",
+      title: "Tanışma Toplantısı ve Proje Bilgilendirmesi",
       description: "Bahçecilik temel bilgileri, araç-gereç tanıtımı ve güvenli çalışma prensipleri"
     },
     {
       week: 2,
       icon: FlaskConical,
-      title: "Toprak ve İklim Bilgilendirme",
-      description: "Toprak yapısı, iklim özellikleri ve bitki-toprak ilişkisi hakkında interaktif eğitim"
+      title: "Bahçe Terapisi Faaliyetleri",
+      description: "Bahçe terapisi faaliyetleri, duyu deneyimleri ve rahatlama çalışmaları"
     },
     {
       week: 3,
       icon: Sprout,
-      title: "Tohum Ekimi ve Çoğaltma",
+      title: "Doğada Fidan Dikimi",
       description: "Tohum ekimi teknikleri, fide yetiştirme ve bitki çoğaltma yöntemleri"
     },
     {
       week: 4,
       icon: TreeDeciduous,
-      title: "Ağaç Dikimi Etkinliği",
-      description: "Pratik ağaç dikimi uygulaması, fidan bakımı ve ağaçların çevresel önemi"
+      title: "Botanik Bahçe ve Kuş Cenneti Gezisi",
+      description: "Botanik bahçe keşfi, zengin bitki koleksiyonları ve kuş cenneti gözlemleriyle doğa deneyimi"
     },
     {
       week: 5,
       icon: Apple,
-      title: "Meyve ve Sebze Toplama",
+      title: "Ağaç Terapisi",
       description: "Bahçeden hasat yapma, organik ürünlerin faydaları ve sağlıklı beslenme"
     },
     {
       week: 6,
-      icon: Leaf,
-      title: "Botanik Bahçe Gezisi",
-      description: "Zengin bitki koleksiyonlarını keşfetme, bitki türleri hakkında bilgi edinme"
-    },
-    {
-      week: 7,
       icon: BookOpen,
       title: "Herbaryum Hazırlama",
       description: "Bitki örnekleri toplama, kurutma ve herbaryum oluşturma teknikleri"
     },
     {
+      week: 7,
+      icon: Leaf,
+      title: "Doğada Bir Gün",
+      description: "Meyve ve sebze toplama"
+    },
+    {
       week: 8,
       icon: Camera,
-      title: "Proje Değerlendirme ve Kutlama",
+      title: "Ata Tohum Devir Teslim",
       description: "Deneyimlerin paylaşılması, fotoğraf sergisi ve sertifika töreni"
     }
   ];
@@ -59,7 +59,7 @@ const Activities = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            8 Haftalık Program
+            8 Haftalık Faaliyetler
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Detaylı planlanmış hortikürel terapi etkinlikleri ile dolu, zenginleştirilmiş bir öğrenme yolculuğu
