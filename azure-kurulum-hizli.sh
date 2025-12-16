@@ -74,7 +74,7 @@ else
     git clone https://github.com/alibahadirkus/nesil-bahce-baglar.git .
 fi
 
-cd nesil-bahce-baglar
+# Proje zaten doğru dizinde, cd nesil-bahce-baglar gerekmiyor
 
 # 9. Dependencies
 echo -e "${YELLOW}📦 Dependencies kuruluyor...${NC}"
