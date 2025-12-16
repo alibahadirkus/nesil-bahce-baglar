@@ -1,0 +1,47 @@
+===========================================
+AZURE VM KURULUM ADIMLARI
+IP: 20.120.180.80
+User: azureuser
+Şifre: Deneme123!!!
+===========================================
+
+1. WINDOWS POWERSHELL'DEN BAĞLAN:
+
+ssh azureuser@20.120.180.80
+(Şifre: Deneme123!!!)
+
+2. SUNUCUDA ŞU KOMUTLARI ÇALIŞTIR:
+
+# Proje dizini oluştur
+sudo mkdir -p /var/www/bahcelerbaglar
+sudo chown -R $USER:$USER /var/www/bahcelerbaglar
+
+# GitHub'dan clone
+cd /var/www/bahcelerbaglar
+git clone https://github.com/alibahadirkus/nesil-bahce-baglar.git .
+cd nesil-bahce-baglar
+
+# Hızlı kurulum scriptini çalıştır
+chmod +x azure-kurulum-hizli.sh
+bash azure-kurulum-hizli.sh
+
+3. AZURE PORTAL'DA PORTLARI AÇ:
+
+Network Security Group → Inbound rules:
+- Port 80 (HTTP)
+- Port 443 (HTTPS - opsiyonel)
+
+4. TARAYICIDAN KONTROL ET:
+
+http://20.120.180.80
+
+===========================================
+
+TÜM KURULUM OTOMATİK OLARAK YAPILACAK:
+✅ Node.js, MySQL, PM2, Nginx kurulur
+✅ Veritabanı oluşturulur
+✅ Proje build edilir
+✅ Servisler başlatılır
+
+===========================================
+

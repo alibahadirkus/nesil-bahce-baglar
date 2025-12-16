@@ -1,0 +1,33 @@
+===========================================
+HIZLI KURULUM - 2 ADIM
+===========================================
+
+1. PowerShell'i açın ve şu komutu çalıştırın:
+
+   cd C:\Users\aliba\Desktop\projects\bahcelerbaglar\nesil-bahce-baglar
+   .\otomatik-kurulum.ps1
+
+   (Şifre istenirse: Deneme123!!!)
+
+VEYA
+
+2. Manuel olarak SSH ile bağlanın:
+
+   ssh azureuser@20.120.180.80
+   (Şifre: Deneme123!!!)
+
+   Sonra şu komutları çalıştırın:
+
+   sudo mkdir -p /var/www/bahcelerbaglar
+   sudo chown -R $USER:$USER /var/www/bahcelerbaglar
+   cd /var/www/bahcelerbaglar
+   git clone https://github.com/alibahadirkus/nesil-bahce-baglar.git .
+   cd nesil-bahce-baglar
+   chmod +x azure-kurulum-hizli.sh
+   bash azure-kurulum-hizli.sh
+
+===========================================
+Kurulum 10-15 dakika sürebilir.
+Tamamlandıktan sonra: http://20.120.180.80
+===========================================
+

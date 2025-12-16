@@ -1,0 +1,29 @@
+===========================================
+TEK KOMUTLA KURULUM
+===========================================
+
+PowerShell'de şu komutu çalıştırın:
+
+ssh azureuser@20.120.180.80 "sudo mkdir -p /var/www/bahcelerbaglar && sudo chown -R azureuser:azureuser /var/www/bahcelerbaglar && cd /var/www/bahcelerbaglar && git clone https://github.com/alibahadirkus/nesil-bahce-baglar.git . && cd nesil-bahce-baglar && chmod +x azure-kurulum-hizli.sh && bash azure-kurulum-hizli.sh"
+
+(Şifre: Deneme123!!!)
+
+===========================================
+VEYA ADIM ADIM:
+===========================================
+
+1. ssh azureuser@20.120.180.80
+   (Şifre: Deneme123!!!)
+
+2. Sunucuda şu komutları çalıştır:
+
+sudo mkdir -p /var/www/bahcelerbaglar
+sudo chown -R $USER:$USER /var/www/bahcelerbaglar
+cd /var/www/bahcelerbaglar
+git clone https://github.com/alibahadirkus/nesil-bahce-baglar.git .
+cd nesil-bahce-baglar
+chmod +x azure-kurulum-hizli.sh
+bash azure-kurulum-hizli.sh
+
+===========================================
+
