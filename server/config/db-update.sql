@@ -141,6 +141,7 @@ CREATE TABLE IF NOT EXISTS volunteer_activities (
   activity_date DATE NOT NULL,
   activity_time TIME,
   location VARCHAR(500),
+  image_ids TEXT, -- JSON array of image IDs
   created_by INT, -- Admin ID (opsiyonel)
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -148,6 +149,40 @@ CREATE TABLE IF NOT EXISTS volunteer_activities (
   INDEX idx_volunteer_id (volunteer_id),
   INDEX idx_activity_date (activity_date),
   INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- image_ids kolonu yoksa ekle (mevcut tablolara)
+SET @dbname = DATABASE();
+SET @tablename = 'volunteer_activities';
+SET @columnname = 'image_ids';
+SET @preparedStatement = (SELECT IF(
+  (
+    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE
+      (TABLE_SCHEMA = @dbname)
+      AND (TABLE_NAME = @tablename)
+      AND (COLUMN_NAME = @columnname)
+  ) > 0,
+  'SELECT 1',
+  CONCAT('ALTER TABLE ', @tablename, ' ADD COLUMN ', @columnname, ' TEXT NULL AFTER location')
+));
+PREPARE alterIfNotExists FROM @preparedStatement;
+EXECUTE alterIfNotExists;
+DEALLOCATE PREPARE alterIfNotExists;
+
+-- Proje süreci görselleri tablosu
+CREATE TABLE IF NOT EXISTS process_steps_images (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  step_number INT NOT NULL,
+  image_id INT NOT NULL,
+  title VARCHAR(255),
+  description TEXT,
+  display_order INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (image_id) REFERENCES uploaded_images(id) ON DELETE CASCADE,
+  INDEX idx_step_number (step_number),
+  INDEX idx_image_id (image_id),
+  INDEX idx_display_order (display_order)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
