@@ -1,6 +1,6 @@
 -- Mevcut tablolara yeni kolonlar ve tablolar ekle
 
-USE nesil_bahce_baglar;
+USE bahcelerbaglar;
 
 -- Öğrenciler tablosu
 CREATE TABLE IF NOT EXISTS students (
