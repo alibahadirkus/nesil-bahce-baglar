@@ -1,7 +1,7 @@
 -- Veritabanı oluştur
-CREATE DATABASE IF NOT EXISTS nesil_bahce_baglar CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS bahcelerbaglar CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE nesil_bahce_baglar;
+USE bahcelerbaglar;
 
 -- Admin kullanıcıları tablosu
 CREATE TABLE IF NOT EXISTS admins (
