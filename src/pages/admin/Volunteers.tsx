@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, ExternalLink } from 'lucide-react';
 import { volunteersAPI } from '@/lib/api';
 import { toast } from '@/hooks/use-toast';
 
@@ -207,6 +207,15 @@ const Volunteers = () => {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open(`/volunteer/${volunteer.id}`, '_blank')}
+                          title="Dashboard'u Görüntüle"
+                        >
+                          <ExternalLink className="h-4 w-4 mr-1" />
+                          Dashboard
+                        </Button>
                         <Button
                           variant="ghost"
                           size="sm"
