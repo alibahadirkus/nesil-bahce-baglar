@@ -21,8 +21,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Plus, Pencil, Trash2, Loader2, ExternalLink } from 'lucide-react';
-import { volunteersAPI } from '@/lib/api';
+import { Plus, Pencil, Trash2, Loader2, ExternalLink, MessageCircle } from 'lucide-react';
+import { volunteersAPI, whatsappAPI } from '@/lib/api';
 import { toast } from '@/hooks/use-toast';
 
 const Volunteers = () => {
@@ -42,6 +42,11 @@ const Volunteers = () => {
   const { data: volunteers = [], isLoading } = useQuery({
     queryKey: ['volunteers'],
     queryFn: () => volunteersAPI.getAll(),
+  });
+
+  const { data: whatsappStatus } = useQuery({
+    queryKey: ['whatsapp-status'],
+    queryFn: () => whatsappAPI.getStatus(),
   });
 
   const createMutation = useMutation({
@@ -148,6 +153,74 @@ const Volunteers = () => {
     }
   };
 
+  const sendDashboardLinksMutation = useMutation({
+    mutationFn: async () => {
+      const baseUrl = window.location.origin;
+      const results = [];
+      
+      for (const volunteer of volunteers) {
+        const dashboardUrl = `${baseUrl}/volunteer/${volunteer.id}`;
+        const message = `Merhaba ${volunteer.first_name} ${volunteer.last_name},\n\nKişisel dashboard'unuza erişmek için aşağıdaki linke tıklayabilirsiniz:\n\n${dashboardUrl}\n\nİyi çalışmalar!`;
+        
+        try {
+          await whatsappAPI.send({
+            volunteer_id: volunteer.id,
+            phone: volunteer.phone,
+            message: message,
+            link_url: dashboardUrl,
+          });
+          results.push({ id: volunteer.id, success: true });
+        } catch (error) {
+          results.push({ id: volunteer.id, success: false });
+        }
+      }
+      
+      return results;
+    },
+    onSuccess: (results) => {
+      const successCount = results.filter((r) => r.success).length;
+      const failedCount = results.filter((r) => !r.success).length;
+      
+      toast({
+        title: 'Mesajlar Gönderildi',
+        description: `${successCount} gönüllüye başarıyla gönderildi. ${failedCount > 0 ? `${failedCount} gönüllüye gönderilemedi.` : ''}`,
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Hata',
+        description: error.message || 'Mesajlar gönderilirken bir hata oluştu',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleSendDashboardLinks = () => {
+    if (volunteers.length === 0) {
+      toast({
+        title: 'Uyarı',
+        description: 'Gönderilecek gönüllü bulunamadı',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!whatsappStatus?.isReady) {
+      toast({
+        title: 'Uyarı',
+        description: 'WhatsApp bağlantısı hazır değil. Lütfen önce WhatsApp\'ı bağlayın.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!window.confirm(`Tüm gönüllülere (${volunteers.length} kişi) dashboard linklerini WhatsApp ile göndermek istediğinize emin misiniz?`)) {
+      return;
+    }
+
+    sendDashboardLinksMutation.mutate();
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -157,10 +230,29 @@ const Volunteers = () => {
             Gönüllüleri ekleyin, düzenleyin ve yönetin
           </p>
         </div>
-        <Button onClick={() => handleOpenDialog()}>
-          <Plus className="mr-2 h-4 w-4" />
-          Yeni Gönüllü
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={handleSendDashboardLinks}
+            disabled={sendDashboardLinksMutation.isPending || !whatsappStatus?.isReady || volunteers.length === 0}
+          >
+            {sendDashboardLinksMutation.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Gönderiliyor...
+              </>
+            ) : (
+              <>
+                <MessageCircle className="mr-2 h-4 w-4" />
+                Dashboard Linklerini WhatsApp ile Gönder
+              </>
+            )}
+          </Button>
+          <Button onClick={() => handleOpenDialog()}>
+            <Plus className="mr-2 h-4 w-4" />
+            Yeni Gönüllü
+          </Button>
+        </div>
       </div>
 
       <div className="border rounded-lg">
