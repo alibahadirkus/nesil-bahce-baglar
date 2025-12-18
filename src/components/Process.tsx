@@ -1,18 +1,50 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { GraduationCap, UserPlus, TreePine, Droplets, Sprout, Camera, Loader2, X } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { processStepsAPI } from '@/lib/api';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { processStepsAPI, studentsAPI, volunteersAPI } from '@/lib/api';
 import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from '@/hooks/use-toast';
 
 const Process = () => {
   const [selectedStep, setSelectedStep] = useState<number | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<any>(null);
+  const [isStudentFormOpen, setIsStudentFormOpen] = useState(false);
+  const [isVolunteerFormOpen, setIsVolunteerFormOpen] = useState(false);
+  
+  // Öğrenci form state
+  const [studentForm, setStudentForm] = useState({
+    first_name: '',
+    last_name: '',
+    student_number: '',
+    class_name: '',
+    school_name: '',
+    phone: '',
+    email: '',
+    notes: '',
+  });
+  
+  // Gönüllü form state
+  const [volunteerForm, setVolunteerForm] = useState({
+    first_name: '',
+    last_name: '',
+    phone: '',
+    email: '',
+    address: '',
+    notes: '',
+  });
   
   // Statik step tanımları
   const staticSteps = [
@@ -110,17 +142,29 @@ const Process = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {steps.map((step) => {
               const Icon = step.icon;
-              const isClickable = step.hasImages; // Resim varsa tıklanabilir
+              // Step 1 (Öğrenci Kaydı) ve Step 3 (Gönüllü Katılımcı) için form aç
+              // Diğer step'ler için resim varsa galeri aç
+              const isFormStep = step.step === 1 || step.step === 3;
+              const isClickable = isFormStep || step.hasImages;
+              
+              const handleClick = () => {
+                if (step.step === 1) {
+                  setIsStudentFormOpen(true);
+                } else if (step.step === 3) {
+                  setIsVolunteerFormOpen(true);
+                } else if (step.hasImages) {
+                  setSelectedStep(step.step);
+                  setIsGalleryOpen(true);
+                }
+              };
+              
               return (
                 <Card 
                   key={step.step} 
                   className={`border-2 border-border hover:border-primary transition-all shadow-soft hover:shadow-strong ${
                     isClickable ? 'cursor-pointer' : ''
                   }`}
-                  onClick={isClickable ? () => {
-                    setSelectedStep(step.step);
-                    setIsGalleryOpen(true);
-                  } : undefined}
+                  onClick={isClickable ? handleClick : undefined}
                 >
                 <CardContent className="pt-6">
                   <div className="flex items-start gap-4">
@@ -243,6 +287,230 @@ const Process = () => {
               )}
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Öğrenci Kayıt Formu */}
+      <Dialog open={isStudentFormOpen} onOpenChange={setIsStudentFormOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Öğrenci Kayıt Formu</DialogTitle>
+            <DialogDescription>
+              Projeye katılmak için formu doldurun. Size yakında bir gönüllü eşleştirilecektir.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            try {
+              await studentsAPI.registerPublic(studentForm);
+              toast({
+                title: 'Başarılı',
+                description: 'Kaydınız başarıyla oluşturuldu. Size yakında dönüş yapacağız.',
+              });
+              setIsStudentFormOpen(false);
+              setStudentForm({
+                first_name: '',
+                last_name: '',
+                student_number: '',
+                class_name: '',
+                school_name: '',
+                phone: '',
+                email: '',
+                notes: '',
+              });
+            } catch (error: any) {
+              toast({
+                title: 'Hata',
+                description: error.message || 'Kayıt sırasında bir hata oluştu',
+                variant: 'destructive',
+              });
+            }
+          }} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="student_first_name">Ad *</Label>
+                <Input
+                  id="student_first_name"
+                  value={studentForm.first_name}
+                  onChange={(e) => setStudentForm({ ...studentForm, first_name: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="student_last_name">Soyad *</Label>
+                <Input
+                  id="student_last_name"
+                  value={studentForm.last_name}
+                  onChange={(e) => setStudentForm({ ...studentForm, last_name: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="student_number">Öğrenci Numarası</Label>
+                <Input
+                  id="student_number"
+                  value={studentForm.student_number}
+                  onChange={(e) => setStudentForm({ ...studentForm, student_number: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="class_name">Sınıf</Label>
+                <Input
+                  id="class_name"
+                  value={studentForm.class_name}
+                  onChange={(e) => setStudentForm({ ...studentForm, class_name: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="school_name">Okul Adı</Label>
+              <Input
+                id="school_name"
+                value={studentForm.school_name}
+                onChange={(e) => setStudentForm({ ...studentForm, school_name: e.target.value })}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="student_phone">Telefon</Label>
+                <Input
+                  id="student_phone"
+                  type="tel"
+                  value={studentForm.phone}
+                  onChange={(e) => setStudentForm({ ...studentForm, phone: e.target.value })}
+                  placeholder="05XX XXX XX XX"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="student_email">E-posta</Label>
+                <Input
+                  id="student_email"
+                  type="email"
+                  value={studentForm.email}
+                  onChange={(e) => setStudentForm({ ...studentForm, email: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="student_notes">Notlar</Label>
+              <Textarea
+                id="student_notes"
+                value={studentForm.notes}
+                onChange={(e) => setStudentForm({ ...studentForm, notes: e.target.value })}
+                rows={3}
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsStudentFormOpen(false)}>
+                İptal
+              </Button>
+              <Button type="submit">Kayıt Ol</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Gönüllü Kayıt Formu */}
+      <Dialog open={isVolunteerFormOpen} onOpenChange={setIsVolunteerFormOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Gönüllü Kayıt Formu</DialogTitle>
+            <DialogDescription>
+              Projeye gönüllü olarak katılmak için formu doldurun. Size yakında bir öğrenci eşleştirilecektir.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            try {
+              await volunteersAPI.registerPublic(volunteerForm);
+              toast({
+                title: 'Başarılı',
+                description: 'Kaydınız başarıyla oluşturuldu. Size yakında dönüş yapacağız.',
+              });
+              setIsVolunteerFormOpen(false);
+              setVolunteerForm({
+                first_name: '',
+                last_name: '',
+                phone: '',
+                email: '',
+                address: '',
+                notes: '',
+              });
+            } catch (error: any) {
+              toast({
+                title: 'Hata',
+                description: error.message || 'Kayıt sırasında bir hata oluştu',
+                variant: 'destructive',
+              });
+            }
+          }} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="volunteer_first_name">Ad *</Label>
+                <Input
+                  id="volunteer_first_name"
+                  value={volunteerForm.first_name}
+                  onChange={(e) => setVolunteerForm({ ...volunteerForm, first_name: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="volunteer_last_name">Soyad *</Label>
+                <Input
+                  id="volunteer_last_name"
+                  value={volunteerForm.last_name}
+                  onChange={(e) => setVolunteerForm({ ...volunteerForm, last_name: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="volunteer_phone">Telefon *</Label>
+              <Input
+                id="volunteer_phone"
+                type="tel"
+                value={volunteerForm.phone}
+                onChange={(e) => setVolunteerForm({ ...volunteerForm, phone: e.target.value })}
+                placeholder="05XX XXX XX XX"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="volunteer_email">E-posta</Label>
+              <Input
+                id="volunteer_email"
+                type="email"
+                value={volunteerForm.email}
+                onChange={(e) => setVolunteerForm({ ...volunteerForm, email: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="volunteer_address">Adres</Label>
+              <Textarea
+                id="volunteer_address"
+                value={volunteerForm.address}
+                onChange={(e) => setVolunteerForm({ ...volunteerForm, address: e.target.value })}
+                rows={2}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="volunteer_notes">Notlar</Label>
+              <Textarea
+                id="volunteer_notes"
+                value={volunteerForm.notes}
+                onChange={(e) => setVolunteerForm({ ...volunteerForm, notes: e.target.value })}
+                rows={3}
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsVolunteerFormOpen(false)}>
+                İptal
+              </Button>
+              <Button type="submit">Kayıt Ol</Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </section>

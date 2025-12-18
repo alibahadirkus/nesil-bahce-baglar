@@ -75,6 +75,21 @@ export const volunteersAPI = {
     return response.json();
   },
   
+  registerPublic: async (data: any) => {
+    const response = await fetch(`${API_BASE_URL}/volunteers/public/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  },
+  
   getById: async (id: number) => {
     const response = await apiRequest(`/volunteers/${id}`);
     return response.json();
@@ -234,6 +249,21 @@ export const uploadAPI = {
 export const studentsAPI = {
   getAll: async () => {
     const response = await apiRequest('/students');
+    return response.json();
+  },
+  
+  registerPublic: async (data: any) => {
+    const response = await fetch(`${API_BASE_URL}/students/public/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+    }
     return response.json();
   },
   

@@ -38,6 +38,65 @@ router.get('/:id', authenticateToken, async (req, res) => {
   }
 });
 
+// Public: Yeni gönüllü kaydı (formdan)
+router.post('/public/register', async (req, res) => {
+  try {
+    const { first_name, last_name, phone, email, address, notes } = req.body;
+
+    if (!first_name || !last_name || !phone) {
+      return res.status(400).json({ error: 'Ad, soyad ve telefon gereklidir' });
+    }
+
+    // Telefon numarası kontrolü
+    const [existing]: any = await db.execute(
+      'SELECT id FROM volunteers WHERE phone = ?',
+      [phone]
+    );
+
+    if (existing.length > 0) {
+      return res.status(400).json({ error: 'Bu telefon numarası zaten kayıtlı' });
+    }
+
+    const [result]: any = await db.execute(
+      `INSERT INTO volunteers (first_name, last_name, phone, email, address, notes) 
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [first_name, last_name, phone, email || null, address || null, notes || null]
+    );
+
+    const volunteerId = result.insertId;
+
+    // Hoşgeldin SMS'i gönder
+    try {
+      const welcomeMessage = `Merhaba ${first_name} ${last_name}, projeye katıldığınız için teşekkürler! Size yakında bir öğrenci eşleştirilecektir.`;
+      await sendSMS(phone, welcomeMessage, volunteerId);
+      
+      await db.execute(
+        'UPDATE volunteers SET welcome_sms_sent = TRUE, welcome_sms_sent_at = NOW() WHERE id = ?',
+        [volunteerId]
+      );
+    } catch (smsError) {
+      console.error('Welcome SMS gönderilemedi:', smsError);
+      // SMS gönderilemese bile kayıt başarılı
+    }
+
+    const [newVolunteer]: any = await db.execute(
+      'SELECT * FROM volunteers WHERE id = ?',
+      [volunteerId]
+    );
+
+    res.status(201).json({ 
+      message: 'Gönüllü kaydı başarıyla oluşturuldu',
+      volunteer: newVolunteer[0] 
+    });
+  } catch (error: any) {
+    console.error('Public volunteer registration error:', error);
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({ error: 'Bu telefon numarası zaten kayıtlı' });
+    }
+    res.status(500).json({ error: 'Gönüllü kaydı oluşturulurken bir hata oluştu' });
+  }
+});
+
 // Yeni gönüllü ekle
 router.post('/', authenticateToken, async (req, res) => {
   try {

@@ -59,6 +59,51 @@ router.get('/:id', authenticateToken, async (req, res) => {
   }
 });
 
+// Public: Yeni öğrenci kaydı (formdan)
+router.post('/public/register', async (req, res) => {
+  try {
+    const { first_name, last_name, student_number, class_name, school_name, phone, email, notes } = req.body;
+
+    if (!first_name || !last_name) {
+      return res.status(400).json({ error: 'Ad ve soyad gereklidir' });
+    }
+
+    // Öğrenci numarası kontrolü
+    if (student_number) {
+      const [existing]: any = await db.execute(
+        'SELECT id FROM students WHERE student_number = ?',
+        [student_number]
+      );
+
+      if (existing.length > 0) {
+        return res.status(400).json({ error: 'Bu öğrenci numarası zaten kayıtlı' });
+      }
+    }
+
+    const [result]: any = await db.execute(
+      `INSERT INTO students (first_name, last_name, student_number, class_name, school_name, phone, email, notes) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [first_name, last_name, student_number || null, class_name || null, school_name || null, phone || null, email || null, notes || null]
+    );
+
+    const [newStudent]: any = await db.execute(
+      'SELECT * FROM students WHERE id = ?',
+      [result.insertId]
+    );
+
+    res.status(201).json({ 
+      message: 'Öğrenci kaydı başarıyla oluşturuldu',
+      student: newStudent[0] 
+    });
+  } catch (error: any) {
+    console.error('Public student registration error:', error);
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({ error: 'Bu öğrenci numarası zaten kayıtlı' });
+    }
+    res.status(500).json({ error: 'Öğrenci kaydı oluşturulurken bir hata oluştu' });
+  }
+});
+
 // Yeni öğrenci ekle
 router.post('/', authenticateToken, async (req, res) => {
   try {
